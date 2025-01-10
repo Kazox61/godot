@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  os_ios.mm                                                             */
+/*  joypad_apple.h                                                        */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,66 +28,53 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#import "os_ios.h"
+#pragma once
 
-#import "display_server_ios.h"
-#include <iostream>
+#include "core/input/input.h"
+#include "core/input/input_enums.h"
 
-#ifdef IOS_ENABLED
+#define Key _QKey
+#import <GameController/GameController.h>
+#undef Key
 
-OS_IOS *OS_IOS::get_singleton() {
-	return (OS_IOS *)OS_AppleEmbedded::get_singleton();
-}
+@class GCController;
+class RumbleContext;
 
-OS_IOS::OS_IOS() :
-		OS_AppleEmbedded() {
-	DisplayServerIOS::register_ios_driver();
-}
+struct GameController {
+	int joy_id;
+	GCController *controller;
+	RumbleContext *rumble_context API_AVAILABLE(macos(11.0), ios(14.0), tvos(14.0)) = nil;
+	NSInteger ff_effect_timestamp = 0;
+	bool force_feedback = false;
+	bool double_nintendo_joycon_layout = false;
+	bool single_nintendo_joycon_layout = false;
 
-OS_IOS::~OS_IOS() {}
+	uint32_t axis_changed_mask = 0;
+	static_assert(static_cast<uint32_t>(JoyAxis::MAX) < 32, "JoyAxis::MAX must be less than 32");
+	double axis_value[(int)JoyAxis::MAX];
 
-String OS_IOS::get_name() const {
-	return "iOS";
-}
+	GameController(int p_joy_id, GCController *p_controller);
+	~GameController();
+};
 
-void OS_IOS::start() {
-	OS_AppleEmbedded::start();
+class JoypadApple {
+private:
+	id<NSObject> connect_observer = nil;
+	id<NSObject> disconnect_observer = nil;
+	HashMap<int, GameController *> joypads;
+	HashMap<GCController *, int> controller_to_joy_id;
 
-	if (virtual_controller) {
-		virtual_controller->update_state();
-		std::cout << "SHOW VIRTUAL CONTROLLER\n";
-	}
-}
+	GCControllerPlayerIndex get_free_player_index();
 
-void OS_IOS::deinitialize_modules() {
-	if (virtual_controller) {
-		memdelete(virtual_controller);
-	}
-	OS_AppleEmbedded::deinitialize_modules();
-}
+	void add_joypad(GCController *p_controller);
+	void remove_joypad(GCController *p_controller);
 
-void OS_IOS::initialize_joypads() {
-	OS_AppleEmbedded::initialize_joypads();
+public:
+	JoypadApple();
+	~JoypadApple();
 
-	std::cout << "CREATE VIRTUAL CONTROLLER\n";
+	void joypad_vibration_start(GameController &p_joypad, float p_weak_magnitude, float p_strong_magnitude, float p_duration, uint64_t p_timestamp) API_AVAILABLE(macos(11.0), ios(14.0), tvos(14.0));
+	void joypad_vibration_stop(GameController &p_joypad, uint64_t p_timestamp) API_AVAILABLE(macos(11.0), ios(14.0), tvos(14.0));
 
-	virtual_controller = memnew(IOSVirtualController);
-}
-
-VirtualController *OS_IOS::get_virtual_controller() const {
-	return virtual_controller;
-}
-
-void OS_IOS::controller_connected() const {
-	if (virtual_controller) {
-		virtual_controller->controller_connected();
-	}
-}
-
-void OS_IOS::controller_disconnected() const {
-	if (virtual_controller) {
-		virtual_controller->controller_disconnected();
-	}
-}
-
-#endif // IOS_ENABLED
+	void process_joypads();
+};

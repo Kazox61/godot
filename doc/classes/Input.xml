@@ -321,6 +321,13 @@
 				By default, the deadzone is automatically calculated from the average of the action deadzones. However, you can override the deadzone to be whatever you want (on the range of [code]0.0[/code] to [code]1.0[/code]).
 			</description>
 		</method>
+		<method name="get_virtual_controller">
+			<return type="VirtualController" />
+			<description>
+				Return the platform-specific virtual controller or [code]null[/code] if it is not available. See also [VirtualController].
+				[b]Note:[/b] Currently implemented only on iOS 15.0+.
+			</description>
+		</method>
 		<method name="has_joy_light" qualifiers="const">
 			<return type="bool" />
 			<param index="0" name="device" type="int" />
@@ -342,8 +349,8 @@
 			<return type="bool" />
 			<param index="0" name="device" type="int" />
 			<description>
-				Returns [code]true[/code] if the joypad supports vibration. See also [method start_joy_vibration].
-				[b]Note:[/b] For macOS, vibration is only supported in macOS 11 and later. When connected via USB, vibration is only supported for major brand controllers (except Xbox One and Xbox Series X/S controllers) due to macOS limitations.
+				Return the platform-specific virtual controller or [code]null[/code] if it is not available. See also [VirtualController].
+				[b]Note:[/b] Currently implemented only on iOS 15.0+.
 			</description>
 		</method>
 		<method name="is_action_just_pressed" qualifiers="const">
