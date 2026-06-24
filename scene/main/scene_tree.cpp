@@ -45,6 +45,7 @@ STATIC_ASSERT_INCOMPLETE_TYPE(class, RenderingServer);
 #include "scene/animation/tween.h"
 #include "scene/debugger/scene_debugger.h"
 #include "scene/gui/control.h"
+#include "scene/gui/default_virtual_controller.h"
 #include "scene/main/multiplayer_api.h"
 #include "scene/main/node.h"
 #include "scene/main/viewport.h"
@@ -2177,6 +2178,9 @@ SceneTree::SceneTree() {
 	root->set_sdf_oversize(sdf_oversize);
 	Viewport::SDFScale sdf_scale = Viewport::SDFScale(int(GLOBAL_DEF(PropertyInfo(Variant::INT, "rendering/2d/sdf/scale", PROPERTY_HINT_ENUM, "100%,50%,25%"), 1)));
 	root->set_sdf_scale(sdf_scale);
+
+	DefaultVirtualController *default_virtual_controller = memnew(DefaultVirtualController);
+	OS::get_singleton()->initialize_default_virtual_controller(default_virtual_controller);
 
 #ifndef _3D_DISABLED
 	{ // Load default fallback environment.

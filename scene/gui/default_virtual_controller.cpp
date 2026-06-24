@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  os_ios.h                                                              */
+/*  default_virtual_controller.cpp                                        */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,31 +28,88 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#include "default_virtual_controller.h"
 
-#ifdef IOS_ENABLED
+#include "scene/gui/virtual_controller_overlay.h"
+#include "scene/main/canvas_layer.h"
+#include "scene/main/scene_tree.h"
+#include "scene/main/window.h"
 
-#import "virtual_controller_ios.h"
+void DefaultVirtualController::enable() {
+	if (canvas_layer) {
+		canvas_layer->show();
+	}
+}
 
-#import "drivers/apple_embedded/os_apple_embedded.h"
+void DefaultVirtualController::disable() {
+	if (canvas_layer) {
+		canvas_layer->hide();
+	}
+}
 
-class OS_IOS : public OS_AppleEmbedded {
-private:
-	IOSVirtualController *virtual_controller = nullptr;
-	virtual void deinitialize_modules() override;
-	virtual void initialize_joypads() override;
+bool DefaultVirtualController::is_enabled() {
+	return canvas_layer != nullptr && canvas_layer->is_visible();
+}
 
-public:
-	static OS_IOS *get_singleton();
+DefaultVirtualController::DefaultVirtualController() {
+	if (canvas_layer == nullptr) {
+		canvas_layer = memnew(CanvasLayer);
+		SceneTree::get_singleton()->get_root()->add_child(canvas_layer);
+	}
 
-	OS_IOS();
-	~OS_IOS();
+	if (overlay == nullptr) {
+		overlay = memnew(VirtualControllerOverlay);
+		canvas_layer->add_child(overlay);
+	}
+}
 
-	virtual String get_name() const override;
-	virtual void start() override;
-	virtual VirtualController *get_virtual_controller() const override;
-	virtual void controller_connected() const override;
-	virtual void controller_disconnected() const override;
-};
+DefaultVirtualController::~DefaultVirtualController() {
+}
 
-#endif // IOS_ENABLED
+void DefaultVirtualController::set_enabled_left_thumbstick(bool p_enabled) {
+	enabled_left_thumbstick = p_enabled;
+}
+
+bool DefaultVirtualController::is_enabled_left_thumbstick() {
+	return enabled_left_thumbstick;
+}
+
+void DefaultVirtualController::set_enabled_right_thumbstick(bool p_enabled) {
+	enabled_right_thumbstick = p_enabled;
+}
+
+bool DefaultVirtualController::is_enabled_right_thumbstick() {
+	return enabled_right_thumbstick;
+}
+
+void DefaultVirtualController::set_enabled_button_a(bool p_enabled) {
+	enabled_button_a = p_enabled;
+}
+
+bool DefaultVirtualController::is_enabled_button_a() {
+	return enabled_button_a;
+}
+
+void DefaultVirtualController::set_enabled_button_b(bool p_enabled) {
+	enabled_button_b = p_enabled;
+}
+
+bool DefaultVirtualController::is_enabled_button_b() {
+	return enabled_button_b;
+}
+
+void DefaultVirtualController::set_enabled_button_x(bool p_enabled) {
+	enabled_button_x = p_enabled;
+}
+
+bool DefaultVirtualController::is_enabled_button_x() {
+	return enabled_button_x;
+}
+
+void DefaultVirtualController::set_enabled_button_y(bool p_enabled) {
+	enabled_button_y = p_enabled;
+}
+
+bool DefaultVirtualController::is_enabled_button_y() {
+	return enabled_button_y;
+}

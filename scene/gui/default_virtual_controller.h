@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  os_ios.h                                                              */
+/*  default_virtual_controller.h                                          */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -30,29 +30,47 @@
 
 #pragma once
 
-#ifdef IOS_ENABLED
+#include "core/input/virtual_controller.h"
+#include "scene/main/canvas_layer.h"
 
-#import "virtual_controller_ios.h"
+class Button;
+class CanvasLayer;
+class Control;
+class VirtualJoystick;
+class VirtualControllerOverlay;
 
-#import "drivers/apple_embedded/os_apple_embedded.h"
+class DefaultVirtualController : public VirtualController {
+	GDCLASS(DefaultVirtualController, VirtualController);
 
-class OS_IOS : public OS_AppleEmbedded {
 private:
-	IOSVirtualController *virtual_controller = nullptr;
-	virtual void deinitialize_modules() override;
-	virtual void initialize_joypads() override;
+	CanvasLayer *canvas_layer = nullptr;
+	VirtualControllerOverlay *overlay = nullptr;
+
+	bool enabled_left_thumbstick = true;
+	bool enabled_right_thumbstick = true;
+	bool enabled_button_a = true;
+	bool enabled_button_b = true;
+	bool enabled_button_x = true;
+	bool enabled_button_y = true;
 
 public:
-	static OS_IOS *get_singleton();
+	DefaultVirtualController();
+	~DefaultVirtualController();
 
-	OS_IOS();
-	~OS_IOS();
+	void enable() override;
+	void disable() override;
+	bool is_enabled() override;
 
-	virtual String get_name() const override;
-	virtual void start() override;
-	virtual VirtualController *get_virtual_controller() const override;
-	virtual void controller_connected() const override;
-	virtual void controller_disconnected() const override;
+	void set_enabled_left_thumbstick(bool p_enabled) override;
+	bool is_enabled_left_thumbstick() override;
+	void set_enabled_right_thumbstick(bool p_enabled) override;
+	bool is_enabled_right_thumbstick() override;
+	void set_enabled_button_a(bool p_enabled) override;
+	bool is_enabled_button_a() override;
+	void set_enabled_button_b(bool p_enabled) override;
+	bool is_enabled_button_b() override;
+	void set_enabled_button_x(bool p_enabled) override;
+	bool is_enabled_button_x() override;
+	void set_enabled_button_y(bool p_enabled) override;
+	bool is_enabled_button_y() override;
 };
-
-#endif // IOS_ENABLED

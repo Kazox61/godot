@@ -826,8 +826,12 @@ void OS::benchmark_dump() {
 #endif
 }
 
+void OS::initialize_default_virtual_controller(VirtualController *p_virtual_controller) {
+	_default_virtual_controller = p_virtual_controller;
+}
+
 VirtualController *OS::get_virtual_controller() const {
-	return nullptr;
+	return _default_virtual_controller;
 }
 
 void OS::controller_connected() const {

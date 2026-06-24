@@ -30,12 +30,12 @@
 
 #import "joypad_apple.h"
 
-#import <CoreHaptics/CoreHaptics.h>
-#import <os/log.h>
-
 #include "core/config/project_settings.h"
 #include "core/os/os.h"
 #include "main/main.h"
+
+#import <CoreHaptics/CoreHaptics.h>
+#import <os/log.h>
 
 class API_AVAILABLE(macos(11), ios(14.0), tvos(14.0)) RumbleMotor {
 	CHHapticEngine *engine;

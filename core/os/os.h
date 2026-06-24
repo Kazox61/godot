@@ -109,6 +109,8 @@ private:
 	RenderingSource _current_rendering_method_source = RENDERING_SOURCE_DEFAULT;
 	bool _is_gles_over_gl = false;
 
+	VirtualController *_default_virtual_controller = nullptr;
+
 	RemoteFilesystemClient default_rfs;
 
 	// For tracking benchmark data
@@ -417,6 +419,7 @@ public:
 	virtual bool _test_create_rendering_device(const String &p_display_driver) const { return true; }
 #endif
 
+	void initialize_default_virtual_controller(VirtualController *p_virtual_controller);
 	virtual VirtualController *get_virtual_controller() const;
 
 	virtual void controller_connected() const;
